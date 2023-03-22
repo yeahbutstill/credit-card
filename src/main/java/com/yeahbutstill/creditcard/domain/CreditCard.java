@@ -1,5 +1,6 @@
 package com.yeahbutstill.creditcard.domain;
 
+import com.yeahbutstill.creditcard.interceptor.EncryptedString;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,6 +19,7 @@ public class CreditCard {
 
     @NotNull
     @Size(max = 20)
+    @EncryptedString
     private String creditCardNumber;
 
     @NotNull
