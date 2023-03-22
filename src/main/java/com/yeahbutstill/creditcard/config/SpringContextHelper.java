@@ -19,6 +19,4 @@ public class SpringContextHelper implements ApplicationContextAware {
         return applicationContext;
     }
 
-    }
-
 }
