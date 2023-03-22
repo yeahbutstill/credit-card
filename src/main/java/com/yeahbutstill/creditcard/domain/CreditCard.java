@@ -1,7 +1,10 @@
 package com.yeahbutstill.creditcard.domain;
 
 import com.yeahbutstill.creditcard.interceptor.EncryptedString;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -15,7 +18,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "credit_cards")
 public class CreditCard {
 
     @Id
@@ -25,7 +27,6 @@ public class CreditCard {
     @NotNull
     @Size(max = 20)
     @EncryptedString
-    @Column(name = "credit_card_number")
     private String creditCardNumber;
 
     @NotNull

@@ -1,25 +1,17 @@
 package com.yeahbutstill.creditcard.config;
 
-import com.yeahbutstill.creditcard.interceptor.EncryptionInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
 
-@Configuration
+//@Configuration
 public class InterceptorRegistration implements HibernatePropertiesCustomizer {
 
 
-    private final EncryptionInterceptor interceptor;
-
-    @Autowired
-    public InterceptorRegistration(EncryptionInterceptor interceptor) {
-        this.interceptor = interceptor;
-    }
+    //private EncryptionInterceptor interceptor;
 
     @Override
     public void customize(Map<String, Object> hibernateProperties) {
-        hibernateProperties.put("hibernate.session_factory.interceptor", interceptor);
+        //hibernateProperties.put("hibernate.session_factory.interceptor", interceptor);
     }
 }
