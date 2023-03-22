@@ -1,13 +1,11 @@
 package com.yeahbutstill.creditcard.domain;
 
 import com.yeahbutstill.creditcard.interceptor.EncryptedString;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
@@ -18,6 +16,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@EntityListeners(CreditCardJPACallBack.class)
+@Slf4j
 public class CreditCard {
 
     @Id
@@ -48,5 +48,10 @@ public class CreditCard {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @PrePersist
+    public void prePersistCallBack() {
+        log.info("JPA PrePersist Callback Was Called");
     }
 }
