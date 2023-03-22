@@ -1,5 +1,7 @@
 # credit-card
+
 ## Setup docker postgre
+
 ```shell
 sudo docker run --rm \
 --name payment-db \
@@ -13,6 +15,7 @@ postgres:15
 ```
 
 ## Login postgre
+
 ```shell
 psql -h 127.0.0.1 -U paymentuser payment
 ```

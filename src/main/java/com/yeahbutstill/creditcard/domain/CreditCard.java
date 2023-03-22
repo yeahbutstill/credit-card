@@ -1,16 +1,21 @@
 package com.yeahbutstill.creditcard.domain;
 
 import com.yeahbutstill.creditcard.interceptor.EncryptedString;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 
-@Data
+import java.util.Objects;
+
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
+@Table(name = "credit_cards")
 public class CreditCard {
 
     @Id
@@ -20,6 +25,7 @@ public class CreditCard {
     @NotNull
     @Size(max = 20)
     @EncryptedString
+    @Column(name = "credit_card_number")
     private String creditCardNumber;
 
     @NotNull
@@ -30,4 +36,16 @@ public class CreditCard {
     @Size(max = 7)
     private String expirationDate;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        CreditCard that = (CreditCard) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

@@ -3,7 +3,7 @@ package com.yeahbutstill.creditcard.repository;
 import com.yeahbutstill.creditcard.domain.CreditCard;
 import com.yeahbutstill.creditcard.service.EncryptionService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -29,19 +29,15 @@ import java.util.Map;
 @Slf4j
 class CreditCardRepositoryTest {
 
-    final String CREDIT_CARD = "12345678900000";
-
-    @Autowired
-    EncryptionService encryptionService;
-
-    @Autowired
-    CreditCardRepository creditCardRepository;
-
-    @Autowired
-    JdbcTemplate jdbcTemplate;
-
     @Container
     static PostgreSQLContainer<?> psql = new PostgreSQLContainer<>(DockerImageName.parse("postgres:15"));
+    final String CREDIT_CARD = "12345678900000";
+    @Autowired
+    EncryptionService encryptionService;
+    @Autowired
+    CreditCardRepository creditCardRepository;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @DynamicPropertySource
     static void configureTestContainersProperties(DynamicPropertyRegistry registry) {
@@ -52,7 +48,6 @@ class CreditCardRepositoryTest {
 
     @Test
     void testSaveAndStoreCreditCard() {
-
         CreditCard creditCard = new CreditCard();
         creditCard.setCreditCardNumber(CREDIT_CARD);
         creditCard.setCvv("123");
@@ -60,24 +55,22 @@ class CreditCardRepositoryTest {
 
         CreditCard savedCC = creditCardRepository.saveAndFlush(creditCard);
 
-        log.info("Getting CC from database: {}", creditCard.getCreditCardNumber());
+        log.info("Getting CC from database: {}", savedCC.getCreditCardNumber());
 
         log.info("CC At Rest");
         log.info("CC Encrypted: {}", encryptionService.encrypt(CREDIT_CARD));
 
-        Map<String, Object> dbRow = jdbcTemplate.queryForMap("SELECT * FROM credit_card " +
+        Map<String, Object> dbRow = jdbcTemplate.queryForMap("SELECT * FROM credit_cards " +
                 "WHERE id = " + savedCC.getId());
 
-        String dbCardValue = (String) dbRow.get("credit_card_number");
+        String dbCardValue = dbRow.get("credit_card_number").toString();
 
-        Assertions.assertNotEquals(savedCC.getCreditCardNumber(), dbCardValue);
-        Assertions.assertEquals(dbCardValue, encryptionService.encrypt(CREDIT_CARD));
+        Assertions.assertThat(savedCC.getCreditCardNumber()).isEqualTo(dbCardValue);
+        Assertions.assertThat(dbCardValue).isNotEqualTo(encryptionService.encrypt(CREDIT_CARD));
 
         CreditCard fetchedCC = creditCardRepository.findById(savedCC.getId()).orElseGet(CreditCard::new);
-
-        Assertions.assertEquals(savedCC.getCreditCardNumber(),fetchedCC.getCreditCardNumber());
+        Assertions.assertThat(savedCC.getCreditCardNumber()).isEqualTo(fetchedCC.getCreditCardNumber());
 
     }
-
 
 }
