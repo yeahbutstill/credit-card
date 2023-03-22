@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -16,6 +17,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+
+import java.util.Map;
 
 
 @ComponentScan(basePackageClasses = {EncryptionService.class})
@@ -34,6 +37,8 @@ class CreditCardRepositoryTest {
     @Autowired
     CreditCardRepository creditCardRepository;
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @Container
     static PostgreSQLContainer<?> psql = new PostgreSQLContainer<>(DockerImageName.parse("postgres:15"));
@@ -59,6 +64,14 @@ class CreditCardRepositoryTest {
 
         log.info("CC At Rest");
         log.info("CC Encrypted: {}", encryptionService.encrypt(CREDIT_CARD));
+
+        Map<String, Object> dbRow = jdbcTemplate.queryForMap("SELECT * FROM credit_card " +
+                "WHERE id = " + savedCC.getId());
+
+        String dbCardValue = (String) dbRow.get("credit_card_number");
+
+        Assertions.assertNotEquals(savedCC.getCreditCardNumber(), dbCardValue);
+        Assertions.assertEquals(dbCardValue, encryptionService.encrypt(CREDIT_CARD));
 
         CreditCard fetchedCC = creditCardRepository.findById(savedCC.getId()).orElseGet(CreditCard::new);
 
