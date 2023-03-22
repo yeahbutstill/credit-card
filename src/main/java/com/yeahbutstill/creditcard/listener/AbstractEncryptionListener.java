@@ -20,6 +20,7 @@ public abstract class AbstractEncryptionListener {
     public void encrypt(Object[] state, String[] propertyNames, Object entity) {
         ReflectionUtils.doWithFields(entity.getClass(), field -> encryptField(field, state, propertyNames), this::isFieldEncrypted);
     }
+
     private void encryptField(Field field, Object[] state, String[] propertyNames) {
         int idx = getPropertyIndex(field.getName(), propertyNames);
         Object currentValue = state[idx];

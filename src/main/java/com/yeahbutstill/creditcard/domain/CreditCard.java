@@ -1,6 +1,5 @@
 package com.yeahbutstill.creditcard.domain;
 
-import com.yeahbutstill.creditcard.interceptor.EncryptedString;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,7 +15,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@EntityListeners(CreditCardJPACallBack.class)
+//@EntityListeners(CreditCardJPACallBack.class)
 @Slf4j
 public class CreditCard {
 
@@ -26,7 +25,8 @@ public class CreditCard {
 
     @NotNull
     @Size(max = 20)
-    @EncryptedString
+    //@EncryptedString
+    @Convert(converter = CreditCardConverter.class)
     private String creditCardNumber;
 
     @NotNull
